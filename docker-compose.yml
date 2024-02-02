@@ -1,0 +1,37 @@
+version: '3'
+services:
+  web:
+    image: bison:dev
+    build: .
+    command:
+      bash -c "
+      sleep 3
+      && python manage.py migrate
+      && python manage.py collectstatic --noinput
+      && python manage.py runserver 0.0.0.0:8000"
+      # && gunicorn --bind 0.0.0.0:8000 bison.wsgi:application"
+    volumes:
+      - .:/app
+      - ./static:/var/static
+    ports:
+      - "8000:8000"
+      - "5678:5678"
+    depends_on:
+      - redis
+    links:
+      - redis:redis
+    env_file:
+      - .env
+
+  redis:
+    image: redis
+    volumes:
+      - ./docker/redis/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./docker/redis/redis_data:/data
+    expose:
+      - "6379"
+    ports:
+      - "6379:6379"
+    env_file:
+      - .env
+    command: redis-server /usr/local/etc/redis/redis.conf --requirepass "${REDIS_PASSWORD}"
