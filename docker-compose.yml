@@ -7,7 +7,6 @@ services:
       bash -c "
       sleep 3
       && python manage.py migrate
-      && python manage.py collectstatic --noinput
       && uvicorn bison.asgi:application --host 0.0.0.0 --port 8001"
       # && gunicorn --bind 0.0.0.0:8000 bison.wsgi:application"
     volumes:
