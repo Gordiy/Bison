@@ -140,7 +140,6 @@ dmypy.json
 
 # StaticFiles and uploads and documentation
 staticfiles
-static
 media
 uploads
 

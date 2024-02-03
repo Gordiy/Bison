@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+    {% load static %}
     <title>My Django Template</title>
+    
+    <script src="{% static 'websocket/index.js' %}"></script>
 </head>
 <body>
     <h1>Hello, {{ name }}!</h1>
