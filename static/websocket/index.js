@@ -1,4 +1,4 @@
-const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/balance/');
+const chatSocket = new WebSocket('wss://' + window.location.host + '/ws/balance/');
 
 chatSocket.onmessage = function (e) {
     const data = JSON.parse(e.data);
