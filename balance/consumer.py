@@ -31,7 +31,7 @@ class BalanceConsumer(AsyncWebsocketConsumer):
         if message == 'update_balance':
             balance = self.service.update_balance()
             
-        await self.send_message_to_all({'balance': balance})
+            await self.send_message_to_all({'balance': balance})
 
     async def send_message_to_all(self, message):
         """Send message to all connected clients."""
