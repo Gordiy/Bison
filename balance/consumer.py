@@ -2,15 +2,22 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 
+from balance.services import WayForPayService
+
 
 class BalanceConsumer(AsyncWebsocketConsumer):
     group_name = 'websocket.connect'
+    service = WayForPayService()
 
     async def connect(self):
         """Accept client connection."""
         await self.accept()
 
         await self.channel_layer.group_add(self.group_name, self.channel_name)
+
+        balance = self.service.balance
+
+        await self.send(text_data=json.dumps({'message': {'balance': balance}}))
 
     async def disconnect(self, close_code):
         """Disable disconnect method."""
@@ -21,8 +28,10 @@ class BalanceConsumer(AsyncWebsocketConsumer):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
         
-        print(message)
-        await self.send_message_to_all(message)
+        if message == 'update_balance':
+            balance = self.service.update_balance()
+            
+        await self.send_message_to_all({'balance': balance})
 
     async def send_message_to_all(self, message):
         """Send message to all connected clients."""
