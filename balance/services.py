@@ -57,6 +57,7 @@ class WayForPayService:
         response = requests.post(url, data=payload)
 
         if not response.status_code == 200:
+            print(response.json())
             return None
 
         return response.json().get('balance_UAH')
