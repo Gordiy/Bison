@@ -8,7 +8,7 @@ chatSocket.onmessage = function (e) {
     // Handle incoming message
     const chatMessages = document.getElementById('chat-messages');
     const messageElement = document.createElement('p');
-    messageElement.textContent = message;
+    messageElement.textContent = message.balance;
     chatMessages.appendChild(messageElement);
 };
 
