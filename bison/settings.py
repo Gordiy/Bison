@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-e0i(ko@_32nf%mew^@&)1x*m2)vd3edbh_sz3&doo(ge_u_^u&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -107,22 +107,22 @@ DATABASES = {
 }
 
 # Cache
-REDIS_HOST = os.environ.get('REDIS_HOST', 'redis')
-REDIS_PORT = os.environ.get('REDIS_PORT', 6379)
 REDIS_PASSWORD = os.environ.get('REDIS_PASSWORD')
-REDIS_DB_CACHE = os.environ.get('REDIS_DB_CACHE', 0)
+
+REDIS_URL = os.getenv('REDIS_URL')
 
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': f'redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB_CACHE}',
+        'LOCATION': REDIS_URL,
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-            'PASSWORD': REDIS_PASSWORD,  # Add this line with your Redis password
         }
     }
 }
 
+if DEBUG:
+    CACHES['default']['OPTIONS']['PASSWORD'] = REDIS_PASSWORD
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
