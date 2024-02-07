@@ -1,0 +1,6 @@
+"""Constants for balance app."""
+import os
+
+WAYFORPAY_BASE_URL=os.getenv('WAYFORPAY_BASE_URL')
+MERCHANT_ACCOUNT=os.getenv('MERCHANT_ACCOUNT')
+MERCHANT_SIGNATURE=os.getenv('MERCHANT_SIGNATURE')
