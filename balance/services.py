@@ -2,6 +2,8 @@
 import json
 
 import requests
+from bs4 import BeautifulSoup
+from lxml import etree
 
 from balance.constants import (MERCHANT_ACCOUNT, MERCHANT_SIGNATURE,
                                WAYFORPAY_BASE_URL)
@@ -22,7 +24,7 @@ class WayForPayService:
         cached_balance = cache.get(self.balance_cache_key)
 
         if cached_balance is None:
-            balance = self.get_balance()
+            balance = self.get_balance_bs4()
             cache.set(self.balance_cache_key, balance)
 
             return balance
@@ -35,13 +37,13 @@ class WayForPayService:
 
         :return: The updated balance in UAH.
         """
-        balance = self.get_balance()
+        balance = self.get_balance_bs4()
 
         cache.set(self.balance_cache_key, balance)
 
         return balance
 
-    def get_balance(self) -> int or None:
+    def get_balance_api(self) -> int:
         """
         Get the current balance from the WayForPay API.
 
@@ -61,3 +63,26 @@ class WayForPayService:
             return None
 
         return response.json().get('balance_UAH')
+
+    def get_balance_bs4(self) -> int:
+        donate_page_url = 'https://secure.wayforpay.com/donate/db5c92813866e'
+        HEADERS = ({
+            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36', 
+            'Accept-Language': 'en-US, en;q=0.5'}) 
+
+        response = requests.get(donate_page_url, headers=HEADERS)
+        if response.status_code == 200:
+            # Parse the HTML content of the page
+            soup = BeautifulSoup(response.content, "html.parser")
+
+            amount_xpath = '/html/body/div/div[1]/div[2]/div/div[1]/div[2]'
+
+            tree = etree.HTML(str(soup))
+
+            # Use XPath to get elements
+            elements = tree.xpath(amount_xpath)
+            for element in elements:
+                return element.text
+        else:
+            print(f"Can't get balance value. Response: {response.status_code} -{response.json()}")
+            return None
